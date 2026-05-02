@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -13,294 +12,225 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Pretendard:wght@300;400;500;600&display=swap');
 
 :root {
--–bg: #0a0a0f;
--–surface: #13131a;
--–border: rgba(255,255,255,0.08);
--–accent: #7effd4;
--–accent2: #ff6b6b;
--–accent3: #ffd166;
--–text: #f0f0f0;
--–muted: rgba(240,240,240,0.4);
--–gemini: #4285f4;
--–claude: #cc7b3a;
--–chatgpt: #10a37f;
+  --bg: #0a0a0f;
+  --surface: #13131a;
+  --border: rgba(255,255,255,0.08);
+  --accent: #7effd4;
+  --accent2: #ff6b6b;
+  --accent3: #ffd166;
+  --text: #f0f0f0;
+  --muted: rgba(240,240,240,0.4);
+  --gemini: #4285f4;
+  --claude: #cc7b3a;
+  --chatgpt: #10a37f;
 }
 
--- { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 html, body {
-width: 100%; height: 100%;
-background: var(–bg);
-color: var(–text);
-font-family: ‘Pretendard’, -apple-system, sans-serif;
-overflow: hidden;
-user-select: none;
+  width: 100%; height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Pretendard', -apple-system, sans-serif;
+  overflow: hidden;
+  user-select: none;
 }
 
 .screen {
-position: fixed; inset: 0;
-display: flex; flex-direction: column;
-transition: opacity 0.3s, transform 0.3s;
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column;
+  transition: opacity 0.3s, transform 0.3s;
 }
-.screen.hidden { opacity: 0; pointer-events: none; transform: translateY(20px); }
+.screen.hidden { opacity: 0; pointer-events: none; transform: translateY(16px); }
 
-/* ─── CAMERA ─── */
 #cameraScreen { background: #000; }
-
 #videoEl { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-#frozenCanvas {
-position: absolute; inset: 0;
-width: 100%; height: 100%;
-object-fit: cover; display: none;
-}
-
-#freezeOverlay {
-position: absolute; inset: 0;
-background: rgba(0,0,0,0.35);
-display: none; pointer-events: none;
-}
+#frozenCanvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
+#freezeOverlay { position: absolute; inset: 0; background: rgba(0,0,0,0.35); display: none; pointer-events: none; }
 
 #selectionBox {
-position: absolute;
-border: 2px solid var(–accent);
-background: rgba(126,255,212,0.1);
-display: none; pointer-events: none;
-border-radius: 4px;
-box-shadow: 0 0 0 1px rgba(126,255,212,0.3), 0 0 20px rgba(126,255,212,0.15);
+  position: absolute;
+  border: 2px solid var(--accent);
+  background: rgba(126,255,212,0.1);
+  display: none; pointer-events: none;
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px rgba(126,255,212,0.3), 0 0 20px rgba(126,255,212,0.15);
 }
 #selectionBox::before, #selectionBox::after {
-content: ‘’; position: absolute;
-width: 14px; height: 14px;
-border-color: var(–accent); border-style: solid;
+  content: ''; position: absolute; width: 14px; height: 14px;
+  border-color: var(--accent); border-style: solid;
 }
 #selectionBox::before { top:-2px; left:-2px; border-width:3px 0 0 3px; border-radius:3px 0 0 0; }
 #selectionBox::after  { bottom:-2px; right:-2px; border-width:0 3px 3px 0; border-radius:0 0 3px 0; }
 
-/* TOP BAR */
 #topBar {
-position: absolute; top:0; left:0; right:0;
-padding: env(safe-area-inset-top,16px) 20px 16px;
-padding-top: max(env(safe-area-inset-top), 48px);
-display: flex; align-items: center; justify-content: space-between;
-background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
-z-index: 10;
+  position: absolute; top: 0; left: 0; right: 0;
+  padding: env(safe-area-inset-top, 16px) 20px 16px;
+  padding-top: max(env(safe-area-inset-top), 48px);
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+  z-index: 20; pointer-events: none;
 }
-.app-title {
-font-family: ‘DM Mono’, monospace;
-font-size: 18px; font-weight: 500; letter-spacing: -0.5px;
-color: var(–accent);
-}
-.app-title span { color: var(–text); opacity: 0.6; }
-
+#topBar > * { pointer-events: auto; }
+.app-title { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500; letter-spacing: -0.5px; color: var(--accent); }
+.app-title span { color: var(--text); opacity: 0.6; }
 #statusBadge {
-font-family: ‘DM Mono’, monospace; font-size: 11px;
-padding: 5px 12px; border-radius: 20px;
-background: rgba(255,255,255,0.08);
-border: 1px solid var(–border);
-color: var(–muted); letter-spacing: 0.5px;
-transition: all 0.3s;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  padding: 5px 12px; border-radius: 20px;
+  background: rgba(255,255,255,0.08); border: 1px solid var(--border);
+  color: var(--muted); letter-spacing: 0.5px; transition: all 0.3s;
 }
-#statusBadge.live     { color: var(–accent2); border-color: rgba(255,107,107,0.4); }
-#statusBadge.frozen   { color: var(–accent3); border-color: rgba(255,209,102,0.4); }
-#statusBadge.selected { color: var(–accent);  border-color: rgba(126,255,212,0.4); }
+#statusBadge.live     { color: var(--accent2); border-color: rgba(255,107,107,0.4); }
+#statusBadge.frozen   { color: var(--accent3); border-color: rgba(255,209,102,0.4); }
+#statusBadge.selected { color: var(--accent);  border-color: rgba(126,255,212,0.4); }
 
-/* HINT */
 #hint {
-position: absolute; top:50%; left:50%;
-transform: translate(-50%,-50%);
-text-align: center; pointer-events: none;
-transition: opacity 0.4s; z-index: 5;
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center; pointer-events: none; transition: opacity 0.4s; z-index: 5;
 }
-#hint .hint-icon { font-size:48px; margin-bottom:12px; display:block; animation: float 2s ease-in-out infinite; }
-#hint .hint-text {
-font-size:15px; color:rgba(255,255,255,0.7); line-height:1.5;
-background:rgba(0,0,0,0.5); padding:10px 20px; border-radius:12px; backdrop-filter:blur(8px);
-}
-@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+#hint .hint-icon { font-size: 48px; margin-bottom: 12px; display: block; animation: float 2s ease-in-out infinite; }
+#hint .hint-text { font-size: 15px; color: rgba(255,255,255,0.7); line-height: 1.5; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 12px; backdrop-filter: blur(8px); }
+@keyframes float { 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-6px) } }
 
-/* BOTTOM PANEL */
 #bottomPanel {
-position: absolute; bottom:0; left:0; right:0;
-padding: 16px 20px;
-padding-bottom: max(env(safe-area-inset-bottom), 24px);
-background: linear-gradient(to top, rgba(0,0,0,0.9) 60%, transparent);
-z-index: 10;
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 16px 20px;
+  padding-bottom: max(env(safe-area-inset-bottom), 24px);
+  background: linear-gradient(to top, rgba(0,0,0,0.92) 60%, transparent);
+  z-index: 20;
 }
-
-#aiSelector { display:flex; gap:10px; margin-bottom:14px; justify-content:center; }
-
+#aiSelector { display: flex; gap: 10px; margin-bottom: 14px; }
 .ai-btn {
-flex:1; padding:10px 8px; border-radius:12px;
-border: 1.5px solid rgba(255,255,255,0.12);
-background: rgba(255,255,255,0.05);
-color: var(–muted);
-font-family: ‘DM Mono’, monospace; font-size:12px; font-weight:500;
-cursor:pointer; transition:all 0.2s;
-display:flex; flex-direction:column; align-items:center; gap:4px;
-backdrop-filter: blur(10px);
+  flex: 1; padding: 10px 8px; border-radius: 12px;
+  border: 1.5px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05); color: var(--muted);
+  font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500;
+  cursor: pointer; transition: all 0.2s;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  backdrop-filter: blur(10px); -webkit-appearance: none;
 }
-.ai-btn .ai-dot {
-width:8px; height:8px; border-radius:50%;
-background:currentColor; opacity:0.5; transition:all 0.2s;
-}
-.ai-btn.active { color:var(–text); border-color:currentColor; background:rgba(255,255,255,0.1); }
-.ai-btn.active .ai-dot { opacity:1; box-shadow:0 0 8px currentColor; }
-.ai-btn[data-ai=“gemini”] { color:var(–gemini); }
-.ai-btn[data-ai=“claude”]  { color:var(–claude); }
-.ai-btn[data-ai=“chatgpt”] { color:var(–chatgpt); }
+.ai-btn .ai-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; opacity: 0.5; transition: all 0.2s; }
+.ai-btn.active { color: var(--text); border-color: currentColor; background: rgba(255,255,255,0.1); }
+.ai-btn.active .ai-dot { opacity: 1; box-shadow: 0 0 8px currentColor; }
+.ai-btn[data-ai="gemini"] { color: var(--gemini); }
+.ai-btn[data-ai="claude"]  { color: var(--claude); }
+.ai-btn[data-ai="chatgpt"] { color: var(--chatgpt); }
 
 #sessionToggle {
-display:flex; background:rgba(255,255,255,0.05);
-border-radius:10px; padding:3px; margin-bottom:14px;
-border:1px solid var(–border);
+  display: flex; background: rgba(255,255,255,0.05);
+  border-radius: 10px; padding: 3px; margin-bottom: 14px;
+  border: 1px solid var(--border);
 }
 .session-btn {
-flex:1; padding:8px; border-radius:8px; border:none;
-background:transparent; color:var(–muted);
-font-family:‘Pretendard’,sans-serif; font-size:12px;
-cursor:pointer; transition:all 0.2s;
+  flex: 1; padding: 8px; border-radius: 8px; border: none;
+  background: transparent; color: var(--muted);
+  font-family: 'Pretendard', sans-serif; font-size: 12px;
+  cursor: pointer; transition: all 0.2s; -webkit-appearance: none;
 }
-.session-btn.active { background:rgba(255,255,255,0.12); color:var(–text); }
+.session-btn.active { background: rgba(255,255,255,0.12); color: var(--text); }
 
-#actionRow { display:flex; gap:12px; align-items:center; }
-
+#actionRow { display: flex; gap: 12px; align-items: center; }
 #resetBtn {
-width:52px; height:52px; border-radius:16px;
-border:1.5px solid rgba(255,255,255,0.15);
-background:rgba(255,255,255,0.06);
-color:var(–muted); font-size:22px; cursor:pointer;
-transition:all 0.2s; display:flex; align-items:center; justify-content:center;
-backdrop-filter:blur(10px);
+  width: 52px; height: 52px; border-radius: 16px;
+  border: 1.5px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.06);
+  color: var(--muted); font-size: 22px; cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(10px); -webkit-appearance: none;
 }
-#resetBtn:active { transform:scale(0.92); background:rgba(255,255,255,0.12); }
-
+#resetBtn:active { transform: scale(0.92); }
 #sendBtn {
-flex:1; height:52px; border-radius:16px; border:none;
-background:linear-gradient(135deg,var(–accent),#00c896);
-color:#0a0a0f;
-font-family:‘Pretendard’,sans-serif; font-size:15px; font-weight:600;
-cursor:pointer; transition:all 0.2s;
-display:flex; align-items:center; justify-content:center; gap:8px;
-opacity:0.4; pointer-events:none;
+  flex: 1; height: 52px; border-radius: 16px; border: none;
+  background: linear-gradient(135deg, var(--accent), #00c896);
+  color: #0a0a0f; font-family: 'Pretendard', sans-serif; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  opacity: 0.35; pointer-events: none; -webkit-appearance: none;
 }
-#sendBtn.ready { opacity:1; pointer-events:auto; }
-#sendBtn:active { transform:scale(0.97); }
-#sendBtn .send-icon { font-size:18px; }
+#sendBtn.ready { opacity: 1; pointer-events: auto; }
+#sendBtn:active { transform: scale(0.97); }
 
-/* ─── REDIRECT SCREEN ─── */
 #redirectScreen {
-background: var(–bg);
-align-items: center;
-justify-content: flex-start;
-padding-top: max(env(safe-area-inset-top), 48px);
-padding-bottom: max(env(safe-area-inset-bottom), 24px);
-overflow-y: auto;
-gap: 0;
+  background: var(--bg);
+  align-items: center; justify-content: flex-start;
+  padding-top: max(env(safe-area-inset-top), 48px);
+  padding-bottom: max(env(safe-area-inset-bottom), 24px);
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
 }
-
 #redirectPreview {
-width: calc(100% - 48px);
-max-height: 240px;
-object-fit: contain;
-border-radius: 16px;
-border: 1px solid var(–border);
-background: var(–surface);
-margin: 20px 24px 16px;
-flex-shrink: 0;
+  width: calc(100% - 48px); max-height: 240px; object-fit: contain;
+  border-radius: 16px; border: 1px solid var(--border); background: var(--surface);
+  margin: 20px 24px 16px; flex-shrink: 0;
 }
-
 #redirectCard {
-width: calc(100% - 48px);
-margin: 0 24px;
-background: var(–surface);
-border-radius: 20px;
-border: 1px solid var(–border);
-padding: 22px 18px;
-flex-shrink: 0;
+  width: calc(100% - 48px); margin: 0 24px 24px;
+  background: var(--surface); border-radius: 20px;
+  border: 1px solid var(--border); padding: 22px 18px; flex-shrink: 0;
 }
-
-.redirect-header {
-display: flex; align-items: center; gap: 12px;
-margin-bottom: 12px;
-}
+.redirect-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
 #redirectAiIcon { font-size: 28px; }
 #redirectTitle  { font-size: 17px; font-weight: 600; }
-
-#redirectSub {
-font-size: 13px; color: var(–muted);
-line-height: 1.6; margin-bottom: 14px;
-}
+#redirectSub { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
 
 #copyStatus {
-display: inline-flex; align-items: center; gap: 6px;
-font-size: 12px; font-family: ‘DM Mono’, monospace;
-padding: 6px 14px; border-radius: 20px;
-background: rgba(126,255,212,0.1);
-color: var(–accent); border: 1px solid rgba(126,255,212,0.3);
-margin-bottom: 16px; transition: all 0.3s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-size: 12px; font-family: 'DM Mono', monospace;
+  padding: 8px 14px; border-radius: 20px;
+  background: rgba(126,255,212,0.1); color: var(--accent);
+  border: 1px solid rgba(126,255,212,0.3);
+  margin-bottom: 16px; transition: all 0.3s; width: 100%;
 }
-#copyStatus.fail {
-background: rgba(255,209,102,0.08);
-color: var(–accent3); border-color: rgba(255,209,102,0.3);
-}
+#copyStatus.fail { background: rgba(255,209,102,0.08); color: var(--accent3); border-color: rgba(255,209,102,0.3); }
+#copyStatus.pending { background: rgba(255,255,255,0.04); color: var(--muted); border-color: var(--border); }
 
-#steps {
-background: rgba(255,255,255,0.03);
-border-radius: 12px; padding: 12px 14px;
-margin-bottom: 16px; border: 1px solid var(–border);
-}
-.step {
-display: flex; align-items: flex-start; gap: 10px;
-font-size: 13px; line-height: 1.5; color: var(–text);
-padding: 5px 0;
-}
-.step:not(:last-child) {
-border-bottom: 1px solid var(–border);
-margin-bottom: 4px; padding-bottom: 9px;
-}
+#steps { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; border: 1px solid var(--border); }
+.step { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.5; color: var(--text); padding: 5px 0; }
+.step:not(:last-child) { border-bottom: 1px solid var(--border); margin-bottom: 4px; padding-bottom: 9px; }
 .step-num {
-font-family: ‘DM Mono’, monospace; font-size: 11px;
-background: var(–border); border-radius: 50%;
-width: 20px; height: 20px; flex-shrink: 0;
-display: flex; align-items: center; justify-content: center;
-margin-top: 1px;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  background: var(--border); border-radius: 50%;
+  width: 20px; height: 20px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; margin-top: 1px;
 }
 
 #openAiBtn {
-width: 100%; padding: 16px; border-radius: 14px; border: none;
-font-family: ‘Pretendard’, sans-serif; font-size: 15px; font-weight: 600;
-cursor: pointer; transition: all 0.2s; margin-bottom: 10px; color: #fff;
+  width: 100%; padding: 16px; border-radius: 14px; border: none;
+  font-family: 'Pretendard', sans-serif; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; margin-bottom: 10px; color: #fff;
+  -webkit-appearance: none;
 }
 #openAiBtn:active { transform: scale(0.97); opacity: 0.9; }
 
-#backToCamera {
-width: 100%; padding: 14px; border-radius: 14px;
-border: 1.5px solid var(–border); background: transparent;
-color: var(–muted); font-family: ‘Pretendard’, sans-serif;
-font-size: 14px; cursor: pointer; transition: all 0.2s;
+#retryClipboardBtn {
+  width: 100%; padding: 12px; border-radius: 14px;
+  border: 1.5px solid rgba(126,255,212,0.3); background: rgba(126,255,212,0.06);
+  color: var(--accent); font-family: 'Pretendard', sans-serif;
+  font-size: 13px; cursor: pointer; transition: all 0.2s;
+  margin-bottom: 10px; display: none; -webkit-appearance: none;
 }
-#backToCamera:active { background: rgba(255,255,255,0.05); }
+#retryClipboardBtn.visible { display: block; }
 
-/* ─── TOAST ─── */
+#backToCamera {
+  width: 100%; padding: 14px; border-radius: 14px;
+  border: 1.5px solid var(--border); background: transparent;
+  color: var(--muted); font-family: 'Pretendard', sans-serif;
+  font-size: 14px; cursor: pointer; -webkit-appearance: none;
+}
+
 #toast {
-position: fixed; bottom: 100px; left: 50%;
-transform: translateX(-50%) translateY(20px);
-background: rgba(255,255,255,0.12);
-border: 1px solid rgba(255,255,255,0.2);
-backdrop-filter: blur(12px); color: var(–text);
-padding: 10px 20px; border-radius: 20px;
-font-size: 13px; z-index: 200; opacity: 0;
-transition: all 0.3s; white-space: nowrap;
-max-width: 90vw; text-align: center;
+  position: fixed; bottom: 110px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(20,20,30,0.92); border: 1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(14px); color: var(--text);
+  padding: 10px 20px; border-radius: 20px;
+  font-size: 13px; z-index: 300; opacity: 0;
+  transition: all 0.3s; white-space: nowrap;
+  max-width: 88vw; text-align: center; pointer-events: none;
 }
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
-
 </head>
 <body>
-
-<!-- ═══ CAMERA SCREEN ═══ -->
 
 <div class="screen" id="cameraScreen">
   <video id="videoEl" autoplay playsinline muted></video>
@@ -320,154 +250,107 @@ max-width: 90vw; text-align: center;
 
   <div id="bottomPanel">
     <div id="aiSelector">
-      <button class="ai-btn active" data-ai="gemini">
-        <div class="ai-dot"></div>Gemini
-      </button>
-      <button class="ai-btn" data-ai="claude">
-        <div class="ai-dot"></div>Claude
-      </button>
-      <button class="ai-btn" data-ai="chatgpt">
-        <div class="ai-dot"></div>ChatGPT
-      </button>
+      <button class="ai-btn active" data-ai="gemini"><div class="ai-dot"></div>Gemini</button>
+      <button class="ai-btn" data-ai="claude"><div class="ai-dot"></div>Claude</button>
+      <button class="ai-btn" data-ai="chatgpt"><div class="ai-dot"></div>ChatGPT</button>
     </div>
-
-```
-<div id="sessionToggle">
-  <button class="session-btn active" data-session="new">🆕 새 대화</button>
-  <button class="session-btn" data-session="continue">💬 이어서 질문</button>
-</div>
-
-<div id="actionRow">
-  <button id="resetBtn" title="초기화">↺</button>
-  <button id="sendBtn">
-    <span class="send-icon">✦</span>AI에게 질문하기
-  </button>
-</div>
-```
-
+    <div id="sessionToggle">
+      <button class="session-btn active" data-session="new">🆕 새 대화</button>
+      <button class="session-btn" data-session="continue">💬 이어서 질문</button>
+    </div>
+    <div id="actionRow">
+      <button id="resetBtn">↺</button>
+      <button id="sendBtn"><span>✦</span>AI에게 질문하기</button>
+    </div>
   </div>
 </div>
 
-<!-- ═══ REDIRECT SCREEN ═══ -->
-
 <div class="screen hidden" id="redirectScreen">
   <img id="redirectPreview" alt="선택된 문제">
-
   <div id="redirectCard">
     <div class="redirect-header">
       <span id="redirectAiIcon"></span>
       <div id="redirectTitle"></div>
     </div>
     <div id="redirectSub"></div>
-    <div id="copyStatus">📋 이미지 복사 완료!</div>
-
-```
-<div id="steps">
-  <div class="step">
-    <div class="step-num">1</div>
-    <div>아래 버튼을 눌러 웹사이트를 열어요</div>
-  </div>
-  <div class="step">
-    <div class="step-num">2</div>
-    <div id="step2text">입력창을 <b>길게 눌러 붙여넣기</b>로 이미지 첨부</div>
-  </div>
-  <div class="step">
-    <div class="step-num">3</div>
-    <div>"이 문제 풀어줘" 입력 후 전송!</div>
-  </div>
-</div>
-
-<button id="openAiBtn">웹사이트 열기 →</button>
-<button id="backToCamera">← 다시 촬영하기</button>
-```
-
+    <div id="copyStatus" class="pending">⏳ 이미지 복사 중...</div>
+    <div id="steps">
+      <div class="step"><div class="step-num">1</div><div>아래 버튼으로 웹사이트를 열어요</div></div>
+      <div class="step"><div class="step-num">2</div><div id="step2text">입력창을 <b>길게 눌러 붙여넣기</b>로 이미지 첨부</div></div>
+      <div class="step"><div class="step-num">3</div><div>"이 문제 풀어줘" 입력 후 전송!</div></div>
+    </div>
+    <button id="openAiBtn">웹사이트 열기 →</button>
+    <button id="retryClipboardBtn">📋 이미지 다시 복사하기</button>
+    <button id="backToCamera">← 다시 촬영하기</button>
   </div>
 </div>
 
 <div id="toast"></div>
 
 <script>
-// ─── AI 설정 ───
-// 새 대화 vs 이어서 URL
-// Gemini : 홈이 곧 최근 대화 목록
-// Claude : /new = 새 대화, /recents = 최근 대화 목록
-// ChatGPT: /?model=gpt-4o = 새 대화, / = 홈(사이드바에 최근 대화)
 const AI_CONFIG = {
   gemini: {
-    name: 'Gemini',
-    icon: '✦',
-    color: '#4285f4',
-    newUrl:      'https://gemini.google.com/app',
+    name: 'Gemini', icon: '✦', color: '#4285f4',
+    newUrl: 'https://gemini.google.com/app',
     continueUrl: 'https://gemini.google.com/app',
-    newDesc:      'Gemini 새 대화창이 열려요.',
+    newDesc: 'Gemini 새 대화창이 열려요. 이미지가 클립보드에 복사됐어요.',
     continueDesc: 'Gemini 홈에서 최근 대화를 선택하세요.',
-    continueStep: '최근 대화를 선택한 뒤 입력창에 <b>길게 눌러 붙여넣기</b>',
+    continueStep: '최근 대화 선택 → 입력창 <b>길게 눌러 붙여넣기</b>',
   },
   claude: {
-    name: 'Claude',
-    icon: '◆',
-    color: '#cc7b3a',
-    newUrl:      'https://claude.ai/new',
+    name: 'Claude', icon: '◆', color: '#cc7b3a',
+    newUrl: 'https://claude.ai/new',
     continueUrl: 'https://claude.ai/recents',
-    newDesc:      'Claude 새 대화창이 열려요.',
+    newDesc: 'Claude 새 대화창이 열려요. 이미지가 클립보드에 복사됐어요.',
     continueDesc: 'Claude 최근 대화 목록이 열려요. 이어갈 대화를 선택하세요.',
-    continueStep: '대화를 선택한 뒤 입력창에 <b>길게 눌러 붙여넣기</b>',
+    continueStep: '대화 선택 → 입력창 <b>길게 눌러 붙여넣기</b>',
   },
   chatgpt: {
-    name: 'ChatGPT',
-    icon: '⬡',
-    color: '#10a37f',
-    newUrl:      'https://chatgpt.com/?model=gpt-4o',
+    name: 'ChatGPT', icon: '⬡', color: '#10a37f',
+    newUrl: 'https://chatgpt.com/?model=gpt-4o',
     continueUrl: 'https://chatgpt.com/',
-    newDesc:      'ChatGPT 새 대화창이 열려요.',
-    continueDesc: 'ChatGPT 홈이 열리면 왼쪽 위 메뉴(☰)에서 최근 대화를 선택하세요.',
-    continueStep: '최근 대화를 선택한 뒤 입력창에 <b>길게 눌러 붙여넣기</b>',
-  }
+    newDesc: 'ChatGPT 새 대화창이 열려요. 이미지가 클립보드에 복사됐어요.',
+    continueDesc: 'ChatGPT 홈이 열려요. 메뉴(☰)에서 최근 대화를 선택하세요.',
+    continueStep: '최근 대화 선택 → 입력창 <b>길게 눌러 붙여넣기</b>',
+  },
 };
 
-// ─── STATE ───
 const state = {
   frozen: false, dragging: false,
-  dragStart: { x:0, y:0 },
+  dragStart: { x: 0, y: 0 },
   selection: null, selectedAI: 'gemini',
   session: 'new', croppedDataURL: null,
 };
 
-// ─── ELEMENTS ───
-const videoEl        = document.getElementById('videoEl');
-const frozenCanvas   = document.getElementById('frozenCanvas');
-const ctx            = frozenCanvas.getContext('2d');
-const freezeOverlay  = document.getElementById('freezeOverlay');
-const selectionBox   = document.getElementById('selectionBox');
-const hint           = document.getElementById('hint');
-const statusBadge    = document.getElementById('statusBadge');
-const sendBtn        = document.getElementById('sendBtn');
-const resetBtn       = document.getElementById('resetBtn');
-const cameraScreen   = document.getElementById('cameraScreen');
-const redirectScreen = document.getElementById('redirectScreen');
-const redirectPreview= document.getElementById('redirectPreview');
-const redirectAiIcon = document.getElementById('redirectAiIcon');
-const redirectTitle  = document.getElementById('redirectTitle');
-const redirectSub    = document.getElementById('redirectSub');
-const openAiBtn      = document.getElementById('openAiBtn');
-const copyStatus     = document.getElementById('copyStatus');
-const step2text      = document.getElementById('step2text');
+const videoEl         = document.getElementById('videoEl');
+const frozenCanvas    = document.getElementById('frozenCanvas');
+const ctx             = frozenCanvas.getContext('2d');
+const freezeOverlay   = document.getElementById('freezeOverlay');
+const selectionBox    = document.getElementById('selectionBox');
+const hint            = document.getElementById('hint');
+const statusBadge     = document.getElementById('statusBadge');
+const sendBtn         = document.getElementById('sendBtn');
+const resetBtn        = document.getElementById('resetBtn');
+const cameraScreen    = document.getElementById('cameraScreen');
+const redirectScreen  = document.getElementById('redirectScreen');
+const redirectPreview = document.getElementById('redirectPreview');
+const redirectAiIcon  = document.getElementById('redirectAiIcon');
+const redirectTitle   = document.getElementById('redirectTitle');
+const redirectSub     = document.getElementById('redirectSub');
+const openAiBtn       = document.getElementById('openAiBtn');
+const copyStatus      = document.getElementById('copyStatus');
+const step2text       = document.getElementById('step2text');
+const retryBtn        = document.getElementById('retryClipboardBtn');
 
-// ─── CAMERA ───
 async function startCamera() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode:'environment', width:{ideal:1920}, height:{ideal:1080} },
+      video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } },
       audio: false
     });
     videoEl.srcObject = stream;
     videoEl.play();
-    hint.style.opacity = '1';
-    statusBadge.textContent = '● LIVE';
-    statusBadge.className   = 'live';
-  } catch(e) {
-    showToast('카메라 권한이 필요해요 📷');
-  }
+  } catch(e) { showToast('카메라 권한이 필요해요 📷'); }
 }
 startCamera();
 
@@ -485,7 +368,6 @@ function freezeFrame() {
   showToast('화면 고정! 드래그로 영역을 선택하세요 ✂️');
 }
 
-// ─── TOUCH / DRAG ───
 function getTouchPos(e) {
   const touch = e.touches ? e.touches[0] : e;
   const rect  = cameraScreen.getBoundingClientRect();
@@ -493,133 +375,139 @@ function getTouchPos(e) {
 }
 
 cameraScreen.addEventListener('touchstart', (e) => {
-  if (e.target.closest('#bottomPanel')) return;
+  if (e.target.closest('#bottomPanel') || e.target.closest('#topBar')) return;
   e.preventDefault();
   if (!state.frozen) { freezeFrame(); return; }
   const pos = getTouchPos(e);
   state.dragging = true; state.dragStart = pos;
-  selectionBox.style.cssText += ';display:block;left:'+pos.x+'px;top:'+pos.y+'px;width:0;height:0';
+  Object.assign(selectionBox.style, { display:'block', left:pos.x+'px', top:pos.y+'px', width:'0px', height:'0px' });
   sendBtn.classList.remove('ready');
   state.selection = null;
-}, { passive:false });
+}, { passive: false });
 
 cameraScreen.addEventListener('touchmove', (e) => {
-  if (e.target.closest('#bottomPanel')) return;
-  e.preventDefault();
   if (!state.dragging) return;
+  e.preventDefault();
   const pos = getTouchPos(e);
-  const x=Math.min(pos.x,state.dragStart.x), y=Math.min(pos.y,state.dragStart.y);
-  const w=Math.abs(pos.x-state.dragStart.x), h=Math.abs(pos.y-state.dragStart.y);
-  selectionBox.style.left=x+'px'; selectionBox.style.top=y+'px';
-  selectionBox.style.width=w+'px'; selectionBox.style.height=h+'px';
-}, { passive:false });
+  const x = Math.min(pos.x, state.dragStart.x), y = Math.min(pos.y, state.dragStart.y);
+  const w = Math.abs(pos.x - state.dragStart.x), h = Math.abs(pos.y - state.dragStart.y);
+  Object.assign(selectionBox.style, { left:x+'px', top:y+'px', width:w+'px', height:h+'px' });
+}, { passive: false });
 
 cameraScreen.addEventListener('touchend', (e) => {
-  if (e.target.closest('#bottomPanel')) return;
-  e.preventDefault();
   if (!state.dragging) return;
+  e.preventDefault();
   state.dragging = false;
   const box  = selectionBox.getBoundingClientRect();
   const rect = cameraScreen.getBoundingClientRect();
-  const x=box.left-rect.left, y=box.top-rect.top, w=box.width, h=box.height;
-  if (w<30||h<30) { selectionBox.style.display='none'; showToast('너무 작아요! 더 크게 드래그해주세요'); return; }
-  state.selection = {x,y,w,h};
-  cropSelection(x,y,w,h);
+  const x = box.left - rect.left, y = box.top - rect.top, w = box.width, h = box.height;
+  if (w < 30 || h < 30) {
+    selectionBox.style.display = 'none';
+    showToast('너무 작아요! 더 크게 드래그해주세요');
+    return;
+  }
+  state.selection = { x, y, w, h };
+  cropSelection(x, y, w, h);
   statusBadge.textContent = '✓ SELECTED';
   statusBadge.className   = 'selected';
   sendBtn.classList.add('ready');
-}, { passive:false });
+}, { passive: false });
 
-// ─── CROP ───
-function cropSelection(sx,sy,sw,sh) {
+function cropSelection(sx, sy, sw, sh) {
   const scaleX = frozenCanvas.width  / cameraScreen.clientWidth;
   const scaleY = frozenCanvas.height / cameraScreen.clientHeight;
   const c = document.createElement('canvas');
-  c.width = sw*scaleX; c.height = sh*scaleY;
+  c.width = sw * scaleX; c.height = sh * scaleY;
   c.getContext('2d').drawImage(frozenCanvas, sx*scaleX, sy*scaleY, sw*scaleX, sh*scaleY, 0, 0, c.width, c.height);
   state.croppedDataURL = c.toDataURL('image/jpeg', 0.92);
 }
 
-// ─── RESET ───
 function resetCamera() {
-  state.frozen = false; state.dragging = false;
-  state.selection = null; state.croppedDataURL = null;
-  frozenCanvas.style.display  = 'none';
-  freezeOverlay.style.display = 'none';
-  selectionBox.style.display  = 'none';
-  hint.style.opacity          = '1';
+  state.frozen = state.dragging = false;
+  state.selection = state.croppedDataURL = null;
+  frozenCanvas.style.display = freezeOverlay.style.display = selectionBox.style.display = 'none';
+  hint.style.opacity = '1';
   statusBadge.textContent = '● LIVE'; statusBadge.className = 'live';
   sendBtn.classList.remove('ready');
 }
-resetBtn.addEventListener('click', resetCamera);
+resetBtn.addEventListener('click', (e) => { e.stopPropagation(); resetCamera(); });
 
-// ─── AI / SESSION SELECTOR ───
 document.querySelectorAll('.ai-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
+  const handler = (e) => {
+    e.stopPropagation(); e.preventDefault();
     document.querySelectorAll('.ai-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     state.selectedAI = btn.dataset.ai;
-  });
+  };
+  btn.addEventListener('touchend', handler);
+  btn.addEventListener('click', handler);
 });
+
 document.querySelectorAll('.session-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
+  const handler = (e) => {
+    e.stopPropagation(); e.preventDefault();
     document.querySelectorAll('.session-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     state.session = btn.dataset.session;
-  });
+  };
+  btn.addEventListener('touchend', handler);
+  btn.addEventListener('click', handler);
 });
 
-// ─── SEND ───
-sendBtn.addEventListener('click', () => { if (state.croppedDataURL) doSend(); });
+sendBtn.addEventListener('click', (e) => { e.stopPropagation(); if (state.croppedDataURL) doSend(); });
 
 async function doSend() {
   const ai         = AI_CONFIG[state.selectedAI];
-  const isContinue = (state.session === 'continue');
-  const targetUrl  = isContinue ? ai.continueUrl : ai.newUrl;
-
-  // 미리보기
-  redirectPreview.src = state.croppedDataURL;
-
-  // 헤더
+  const isContinue = state.session === 'continue';
+  redirectPreview.src        = state.croppedDataURL;
   redirectAiIcon.textContent = ai.icon;
   redirectAiIcon.style.color = ai.color;
   redirectTitle.textContent  = isContinue ? ai.name + ' — 이어서 질문' : ai.name + ' — 새 대화';
   redirectSub.textContent    = isContinue ? ai.continueDesc : ai.newDesc;
-
-  // step 2 안내
-  step2text.innerHTML = isContinue ? ai.continueStep : '입력창을 <b>길게 눌러 붙여넣기</b>로 이미지 첨부';
-
-  // 버튼
+  step2text.innerHTML        = isContinue ? ai.continueStep : '입력창을 <b>길게 눌러 붙여넣기</b>로 이미지 첨부';
   openAiBtn.style.background = ai.color;
   openAiBtn.textContent      = isContinue ? '최근 대화 열기 →' : '새 대화 열기 →';
-  openAiBtn.dataset.url      = targetUrl;
-
-  // 클립보드 복사
-  const copied = await copyImageToClipboard(state.croppedDataURL);
-  copyStatus.textContent = copied
-    ? '📋 이미지 복사 완료! 붙여넣기 준비됐어요'
-    : '⚠️ 복사 실패 — 위 이미지를 길게 눌러 저장하세요';
-  copyStatus.className = copied ? '' : 'fail';
-
-  // 화면 전환
+  openAiBtn.dataset.url      = isContinue ? ai.continueUrl : ai.newUrl;
   cameraScreen.classList.add('hidden');
   redirectScreen.classList.remove('hidden');
+  copyStatus.textContent = '⏳ 이미지 복사 중...';
+  copyStatus.className   = 'pending';
+  retryBtn.classList.remove('visible');
+  const copied = await copyImageToClipboard(state.croppedDataURL);
+  if (copied) {
+    copyStatus.textContent = '📋 복사 완료! 웹사이트에서 붙여넣기하세요';
+    copyStatus.className   = '';
+  } else {
+    copyStatus.textContent = '⚠️ 자동 복사 실패 — 아래 버튼으로 다시 시도';
+    copyStatus.className   = 'fail';
+    retryBtn.classList.add('visible');
+  }
 }
 
-// ─── 열기 버튼 ───
 openAiBtn.addEventListener('click', () => {
-  const url = openAiBtn.dataset.url;
-  if (url) window.open(url, '_blank');
+  if (openAiBtn.dataset.url) window.open(openAiBtn.dataset.url, '_blank');
 });
 
-// ─── 뒤로가기 ───
+retryBtn.addEventListener('click', async () => {
+  retryBtn.textContent = '복사 중...';
+  const copied = await copyImageToClipboard(state.croppedDataURL);
+  if (copied) {
+    copyStatus.textContent = '📋 복사 완료! 이제 웹사이트를 열어주세요';
+    copyStatus.className   = '';
+    retryBtn.classList.remove('visible');
+    showToast('복사됐어요! ✅');
+  } else {
+    retryBtn.textContent = '📋 이미지 다시 복사하기';
+    showToast('Safari 설정에서 클립보드 권한을 허용해주세요');
+  }
+});
+
 document.getElementById('backToCamera').addEventListener('click', () => {
   redirectScreen.classList.add('hidden');
   cameraScreen.classList.remove('hidden');
   resetCamera();
 });
 
-// ─── 클립보드 복사 (JPEG → PNG blob) ───
 async function copyImageToClipboard(dataURL) {
   try {
     const blob = await convertToPngBlob(dataURL);
@@ -645,7 +533,6 @@ function convertToPngBlob(dataURL) {
   });
 }
 
-// ─── TOAST ───
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -654,6 +541,5 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
 }
 </script>
-
 </body>
 </html>
